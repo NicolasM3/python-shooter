@@ -16,7 +16,7 @@ class Player:
         self.life -= damage
 
     #@property
-    def getarrow(self):
+    def get_arrow(self):
         return self.arrow
 
     #@arrow.setter
