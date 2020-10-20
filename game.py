@@ -39,33 +39,25 @@ class game:
             pygame.display.update()
 
     def try_shoot(keys):
-        if(keys[K_p] and player_1.get_arrow()):
+        if(keys[K_p] and player_1.arrow):
             thread = Thread(target=game.shoot, args=(player_1, player_2))
             thread.start()
-        if(keys[K_q] and player_2.get_arrow()):
+        if(keys[K_q] and player_2.arrow):
             thread = Thread(target=game.shoot, args=(player_2, player_1))
             thread.start()
 
     def try_move(keys):
-        if(keys[K_LEFT]):
-                player_1.move((-10, 0))
-        if(keys[K_RIGHT]):
-            player_1.move((10, 0))
-        if(keys[K_UP]):
-            player_1.move((0, -10))
-        if(keys[K_DOWN]):
-            player_1.move((0, 10))
-        if(keys[K_a]):
-            player_2.move((-10, 0))
-        if(keys[K_d]):
-            player_2.move((10, 0))
-        if(keys[K_w]):
-            player_2.move((0, -10))
-        if(keys[K_s]):
-            player_2.move((0, 10))
+        walk_x_p1 = (keys[K_RIGHT] - keys[K_LEFT]) * 10
+        walk_y_p1 = (keys[K_DOWN] - keys[K_UP]) * 10
+        player_1.move((walk_x_p1, walk_y_p1))
 
+        walk_x_p2 = (keys[K_d] - keys[K_a]) * 10
+        walk_y_p2 = (keys[K_s] - keys[K_w]) * 10
+        player_2.move((walk_x_p2, walk_y_p2))
+
+        
     def shoot(player_shoot, other_player):
-        player_shoot.defarrow(False)
+        player_shoot.arrow = False
 
         arr_position = player_shoot.get_postion()
         x, y = arr_position[0], arr_position[1]
@@ -81,4 +73,4 @@ class game:
             if target_position[0] <= x <= target_position[0] + 48 and target_position[1] <= y <= target_position[1] + 48:
                 print('Ganhou')
 
-        player_shoot.defarrow(True)
+        player_shoot.arrow = True

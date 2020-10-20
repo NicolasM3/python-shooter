@@ -3,25 +3,25 @@ class Player:
 
     def __init__(self):
         self.position = [100, 100]
-        self.life = 3
-        self.arrow = True
+        self.__life = 3
+        self.__arrow = True
         self.sprite_postion = [48, 48]
 
-    #@property
-    def getlife(self):
-        return self.life
+    @property
+    def life(self):
+        return self.__life
 
-    #@life.setter
-    def setlife(self, damage):
-        self.life -= damage
+    @life.setter
+    def life(self, damage):
+        self.__life -= damage
 
-    #@property
-    def get_arrow(self):
-        return self.arrow
+    @property
+    def arrow(self):
+        return self.__arrow
 
-    #@arrow.setter
-    def defarrow(self, state):
-        self.arrow = state 
+    @arrow.setter
+    def arrow(self, state):
+        self.__arrow = state 
 
     def move(self, tuple_moviment):
         self.position[0] += tuple_moviment[0]
