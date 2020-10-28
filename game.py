@@ -12,9 +12,11 @@ pygame.display.set_caption("Shooter")
 
 player_1 = Player((100, 100), 2)
 player1 = pygame.image.load("images//heart1.bmp")
+player1.set_colorkey((255, 255, 255))
 
 player_2 = Player((800, 500), 7)
 player2 = pygame.image.load("images//heart2.bmp")
+player2.set_colorkey((255, 255, 255))
 
 tela.blit(cenario, (0, 0))
 
