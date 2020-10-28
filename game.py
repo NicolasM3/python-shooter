@@ -44,14 +44,14 @@ class game:
         game.handle_shoot(player_2, player_1, keys[K_q])
 
     def try_move(keys):
-        walk_x_p1 = (keys[K_RIGHT] - keys[K_LEFT]) * 10
-        walk_y_p1 = (keys[K_DOWN] - keys[K_UP]) * 10
+        walk_x_p1 = (keys[K_RIGHT] - keys[K_LEFT])
+        walk_y_p1 = (keys[K_DOWN] - keys[K_UP]) 
         if(not(walk_x_p1 == 0 and walk_y_p1 == 0)):
             player_1.move((walk_x_p1, walk_y_p1))
 
         
-        walk_x_p2 = (keys[K_d] - keys[K_a]) * 10
-        walk_y_p2 = (keys[K_s] - keys[K_w]) * 10
+        walk_x_p2 = (keys[K_d] - keys[K_a])
+        walk_y_p2 = (keys[K_s] - keys[K_w])
         if(not(walk_x_p2 == 0 and walk_y_p2 == 0)):
             player_2.move((walk_x_p2, walk_y_p2))
 
@@ -63,29 +63,22 @@ class game:
             pygame.draw.rect(tela,(0,0,255),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
             pygame.display.update()
             player_shoot.arrow.move()
+
+            new_position = player_shoot.arrow.position
+
+            if(player_shoot.arrow.position[0] >= 900):
+                new_position[0] = 1
+            if(player_shoot.arrow.position[1] >= 500):
+                new_position[1] = 1
+            if(player_shoot.arrow.position[0] <= 0):
+                new_position[0] = 900
+            if(player_shoot.arrow.position[1] <= 0):
+                new_position[1] = 500
+
+            player_shoot.arrow.position = new_position
+
+            
         if(player_shoot.arrow.state == 2):
-            pygame.draw.rect(tela,(0,0,255),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
+            pygame.draw.rect(tela,(255,0,0),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
             pygame.display.update()
         
-
-
-    # def shoot(player_shoot, other_player):
-    #     player_shoot.arrow = False
-    #     bullet = shoot(player_shoot.direction, [player_shoot.position[0], player_shoot.position[1]])
-    #     for i in range(100):
-    #         bullet.move()
-    #         x, y = bullet.position
-    #         pygame.draw.rect(tela,(0,0,255),(x, y,10,10))
-    #         time.sleep(0.002)
-    #         pygame.display.update()
-
-    #         target_position = other_player.position
-    #         if target_position[0] <= x <= target_position[0] + 48 and target_position[1] <= y <= target_position[1] + 48:
-    #             print('Ganhou')
-
-    #     player_shoot.arrow = True
-
-
-    # def shoot(player_shoot, other_player):
-    #     player_shoot.arrow = False
-    #     bullet = shoot(player_shoot.direction, [player_shoot.position[0], player_shoot.position[1]])

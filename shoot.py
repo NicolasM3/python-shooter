@@ -1,17 +1,18 @@
 dicionario_direction = {
-    0: [0, -3], 1: [3, -3], 2: [3, 0], 3: [3, 3], 4: [0, 3], 5: [-3, 3], 6: [-3, 0], 7: [-3, -3]
+    0: (0, -1), 1: (1, -1), 2: (1, 0), 3: (1, 1), 4: (0, 1), 5: (-1, 1), 6: (-1, 0), 7: (-1, -1)
 }
 
 # state 0 = guardada, 1 = em movimento, 2 - no chao
 
 class shoot:
     def __init__(self, direction, position):
+        self.__speed = 20
+        self.__power = 200
         self.__state = 0
         self.__direction = direction
         self.__position = position
-        self.__target_position = position
-        self.incremento_x = dicionario_direction[direction][0]
-        self.incremento_y = dicionario_direction[direction][1]
+        self.incremento_x = dicionario_direction[direction][0] * self.__speed
+        self.incremento_y = dicionario_direction[direction][1] * self.__speed
 
 
     @property
@@ -35,21 +36,13 @@ class shoot:
         return self.__position
 
     @position.setter
-    def position_x(self, state):
+    def position(self, state):
         self.__position = state
-
-    @property
-    def target_position(self):
-        return self.__target_position
-    
-    @target_position.setter
-    def target_position(self, position):
-        self.__target_position = position
 
     def move(self):
         self.__position[0] += self.incremento_x
         self.__position[1] += self.incremento_y
-        if(self.__target_position[0] <= self.__position[0] <= self.__target_position[0] + 48):
-            if(self.__target_position[1] <= self.__position[1] <= self.__target_position[1] + 48):
-                self.__state = 2
-
+        self.__power -= 1
+        
+        if(self.__power <= 0):
+            self.__state = 2

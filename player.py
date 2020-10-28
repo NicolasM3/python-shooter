@@ -1,12 +1,13 @@
 from shoot import shoot
 
 dicionario_direction = {
-    0: (0, -10), 1: (10, -10), 2: (10, 0), 3: (10, 10), 4: (0, 10), 5: (-10, 10), 6: (-10, 0), 7: (-10, -10)
+    0: (0, -1), 1: (1, -1), 2: (1, 0), 3: (1, 1), 4: (0, 1), 5: (-1, 1), 6: (-1, 0), 7: (-1, -1)
 }
 
 class Player:
 
     def __init__(self, position, direction):
+        self.__speed = 10
         self.__position = [position[0], position[1]]
         self.__life = 3
         self.__arrow = shoot(direction, [position[0], position[1]])
@@ -16,7 +17,6 @@ class Player:
     @property
     def life(self):
         return self.__life
-
     @life.setter
     def life(self, damage):
         self.__life -= damage
@@ -24,7 +24,6 @@ class Player:
     @property
     def arrow(self):
         return self.__arrow
-
     @arrow.setter
     def arrow(self, state):
         self.__arrow = state 
@@ -32,7 +31,6 @@ class Player:
     @property
     def direction(self):
         return self.__direction
-
     @direction.setter
     def direction(self, state):
         self.__direction = state
@@ -40,7 +38,6 @@ class Player:
     @property
     def position(self):
         return self.__position
-
     @position.setter
     def position(self, state):
         self.__position = state
@@ -55,17 +52,14 @@ class Player:
         if(key != -1):
             self.__direction = key
 
-        self.__position[0] += tuple_moviment[0]
-        self.__position[1] += tuple_moviment[1]
+        self.__position[0] += tuple_moviment[0] * self.__speed
+        self.__position[1] += tuple_moviment[1] * self.__speed
         
 
     def shoot(self):
         self.__arrow = shoot(self.__direction, [self.__position[0], self.__position[1]])
         self.__arrow.state = 1
 
-        objective_x = self.__position[0] + dicionario_direction[self.__direction][0] * 10
-        objective_y = self.__position[1] + dicionario_direction[self.__direction][1] * 10
-        self.__arrow.target_position = [objective_x, objective_y]
 
 
 
