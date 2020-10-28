@@ -20,8 +20,21 @@ tela.blit(cenario, (0, 0))
 
 clock = pygame.time.Clock()
 
+
+
+def has_objects_collided(object_1, object_2):
+    tam = 48
+    if(object_1.position[0] + tam >= object_2.position[0] >= object_1.position[0]
+        or object_2.position[0] + tam >= object_1.position[0] >= object_2.position[0]):
+        if(object_1.position[1] + tam >= object_2.position[1] >= object_1.position[1]
+            or object_2.position[1] + tam >= object_1.position[1] >= object_2.position[1]):
+            return True
+    
+    return False
+
 class game:
     def run():
+        cont = 0
         while True:
             clock.tick(20)
             keys = pygame.key.get_pressed()
@@ -36,6 +49,10 @@ class game:
 
             game.try_move(keys)
             game.try_shoot(keys)
+    
+            if(has_objects_collided(player_1, player_2)):
+                cont = cont + 1
+                print(cont)
 
             pygame.display.update()
 
@@ -68,12 +85,12 @@ class game:
 
             if(player_shoot.arrow.position[0] >= 900):
                 new_position[0] = 1
-            if(player_shoot.arrow.position[1] >= 500):
+            if(player_shoot.arrow.position[1] >= 600):
                 new_position[1] = 1
             if(player_shoot.arrow.position[0] <= 0):
                 new_position[0] = 900
             if(player_shoot.arrow.position[1] <= 0):
-                new_position[1] = 500
+                new_position[1] = 600
 
             player_shoot.arrow.position = new_position
 
