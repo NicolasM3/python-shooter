@@ -10,11 +10,11 @@ tela = pygame.display.set_mode((900, 600))
 cenario = pygame.image.load("images//background(2).bmp")
 pygame.display.set_caption("Shooter")
 
-player_1 = Player((100, 100), 2)
+player_1 = Player(1, (100, 100), 2)
 player1 = pygame.image.load("images//heart1.bmp")
 player1.set_colorkey((255, 255, 255))
 
-player_2 = Player((800, 500), 7)
+player_2 = Player(2, (800, 500), 7)
 player2 = pygame.image.load("images//heart2.bmp")
 player2.set_colorkey((255, 255, 255))
 
@@ -78,20 +78,10 @@ class game:
         if(key and player_shoot.arrow.state == 0):
             player_shoot.shoot()
         if(player_shoot.arrow.state == 1):
-            pygame.draw.rect(tela,(0,0,255),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
-            pygame.display.update()
+            game.draw_arrow(player_shoot)
             player_shoot.arrow.move()
 
-            new_position = player_shoot.arrow.position
-
-            if(player_shoot.arrow.position[0] >= 900):
-                new_position[0] = 1
-            if(player_shoot.arrow.position[1] >= 600):
-                new_position[1] = 1
-            if(player_shoot.arrow.position[0] <= 0):
-                new_position[0] = 900
-            if(player_shoot.arrow.position[1] <= 0):
-                new_position[1] = 600
+            new_position = game.calculate_new_pos(player_shoot)
 
             player_shoot.arrow.position = new_position
 
@@ -103,6 +93,25 @@ class game:
             if(has_objects_collided(player_shoot, player_shoot.arrow)):
                 player_shoot.arrow.state = 0
             else:
-                pygame.draw.rect(tela,(255,0,0),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
+                arrow_img = pygame.image.load("images//" + player_shoot.arrow.current_image)
+                arrow_img.set_colorkey((255, 255, 255))
+                tela.blit(arrow_img, (player_shoot.arrow.position[0], player_shoot.arrow.position[1]))                
                 pygame.display.update()
-        
+
+    def draw_arrow(player):
+        arrow_img = pygame.image.load("images//" + player.arrow.current_image)
+        arrow_img.set_colorkey((255, 255, 255))
+        tela.blit(arrow_img, (player.arrow.position[0], player.arrow.position[1]))
+        pygame.display.update()
+
+    def calculate_new_pos(player):
+        new_position = player.arrow.position
+        if(player.arrow.position[0] >= 900):
+            new_position[0] = 1
+        if(player.arrow.position[1] >= 600):
+            new_position[1] = 1
+        if(player.arrow.position[0] <= 0):
+            new_position[0] = 900
+        if(player.arrow.position[1] <= 0):
+            new_position[1] = 600
+        return new_position

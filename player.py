@@ -5,12 +5,12 @@ dicionario_direction = {
 }
 
 class Player:
-    def __init__(self, position, direction):
-        
+    def __init__(self, player_number, position, direction):
         self.__position = [position[0], position[1]]
         self.__speed = 10
         self.__life = 3
-        self.__arrow = shoot(direction, [position[0], position[1]])
+        self.player_number = player_number
+        self.__arrow = shoot(direction, [position[0], position[1]], player_number)
         self.sprite_postion = [48, 48]
         self.__direction = direction
 
@@ -24,7 +24,7 @@ class Player:
         self.__position[1] += tuple_moviment[1] * self.__speed
         
     def shoot(self):
-        self.__arrow = shoot(self.__direction, [self.__position[0], self.__position[1]])
+        self.__arrow = shoot(self.__direction, [self.__position[0], self.__position[1]], self.player_number)
         self.__arrow.state = 1
 
     @property
