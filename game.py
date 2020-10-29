@@ -23,7 +23,6 @@ tela.blit(cenario, (0, 0))
 clock = pygame.time.Clock()
 
 
-
 def has_objects_collided(object_1, object_2):
     tam = 48
     if(object_1.position[0] + tam >= object_2.position[0] >= object_1.position[0]
@@ -96,8 +95,14 @@ class game:
 
             player_shoot.arrow.position = new_position
 
+            if(has_objects_collided(player_shoot.arrow, other_player)):
+                print('Ganhou')
+                player_shoot.arrow.state = 2
             
         if(player_shoot.arrow.state == 2):
-            pygame.draw.rect(tela,(255,0,0),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
-            pygame.display.update()
+            if(has_objects_collided(player_shoot, player_shoot.arrow)):
+                player_shoot.arrow.state = 0
+            else:
+                pygame.draw.rect(tela,(255,0,0),(player_shoot.arrow.position[0], player_shoot.arrow.position[1], 10, 10))
+                pygame.display.update()
         

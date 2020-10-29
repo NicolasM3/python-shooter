@@ -9,7 +9,7 @@ class shoot:
         self.__state = 0
 
         self.__speed = 20
-        self.__power = 200
+        self.__power = 40
         self.__direction = direction
         self.__position = position
         

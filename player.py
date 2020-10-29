@@ -5,7 +5,6 @@ dicionario_direction = {
 }
 
 class Player:
-
     def __init__(self, position, direction):
         
         self.__position = [position[0], position[1]]
@@ -55,7 +54,6 @@ class Player:
     @position.setter
     def position(self, state):
         self.__position = state
-
 
 
 
