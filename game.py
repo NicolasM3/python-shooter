@@ -66,12 +66,13 @@ class game:
         walk_y_p1 = (keys[K_DOWN] - keys[K_UP]) 
         if(not(walk_x_p1 == 0 and walk_y_p1 == 0)):
             player_1.move((walk_x_p1, walk_y_p1))
-
+            player_1.position = game.calculate_new_pos(player_1)
         
         walk_x_p2 = (keys[K_d] - keys[K_a])
         walk_y_p2 = (keys[K_s] - keys[K_w])
         if(not(walk_x_p2 == 0 and walk_y_p2 == 0)):
             player_2.move((walk_x_p2, walk_y_p2))
+            player_2.position = game.calculate_new_pos(player_2)
 
 
     def handle_shoot(player_shoot, other_player, key):
@@ -80,23 +81,17 @@ class game:
         if(player_shoot.arrow.state == 1):
             game.draw_arrow(player_shoot)
             player_shoot.arrow.move()
-
-            new_position = game.calculate_new_pos(player_shoot)
-
-            player_shoot.arrow.position = new_position
+            player_shoot.arrow.position = game.calculate_new_pos(player_shoot.arrow)
 
             if(has_objects_collided(player_shoot.arrow, other_player)):
                 print('Ganhou')
                 player_shoot.arrow.state = 2
-            
+        
         if(player_shoot.arrow.state == 2):
             if(has_objects_collided(player_shoot, player_shoot.arrow)):
                 player_shoot.arrow.state = 0
             else:
-                arrow_img = pygame.image.load("images//" + player_shoot.arrow.current_image)
-                arrow_img.set_colorkey((255, 255, 255))
-                tela.blit(arrow_img, (player_shoot.arrow.position[0], player_shoot.arrow.position[1]))                
-                pygame.display.update()
+                game.draw_arrow(player_shoot)
 
     def draw_arrow(player):
         arrow_img = pygame.image.load("images//" + player.arrow.current_image)
@@ -104,14 +99,14 @@ class game:
         tela.blit(arrow_img, (player.arrow.position[0], player.arrow.position[1]))
         pygame.display.update()
 
-    def calculate_new_pos(player):
-        new_position = player.arrow.position
-        if(player.arrow.position[0] >= 900):
-            new_position[0] = 1
-        if(player.arrow.position[1] >= 600):
-            new_position[1] = 1
-        if(player.arrow.position[0] <= 0):
-            new_position[0] = 900
-        if(player.arrow.position[1] <= 0):
-            new_position[1] = 600
+    def calculate_new_pos(object):
+        new_position = object.position
+        if(object.position[0] >= 885):
+            new_position[0] = 6
+        if(object.position[1] >= 585):
+            new_position[1] = 6
+        if(object.position[0] <= -15):
+            new_position[0] = 880
+        if(object.position[1] <= -15):
+            new_position[1] = 580
         return new_position
