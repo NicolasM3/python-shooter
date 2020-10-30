@@ -11,8 +11,6 @@ cenario = pygame.image.load("images//background(2).bmp")
 pygame.display.set_caption("Shooter")
 
 player_1 = Player(1, (100, 100), 2)
-player1 = pygame.image.load("images//heart1.bmp")
-player1.set_colorkey((255, 255, 255))
 
 player_2 = Player(2, (800, 500), 7)
 player2 = pygame.image.load("images//heart2.bmp")
@@ -33,6 +31,13 @@ def has_objects_collided(object_1, object_2):
     
     return False
 
+def draw_player(player):
+    player_img = pygame.image.load("images//" + player.sprite.current_image)
+    player_img = pygame.transform.flip(player_img, player.sprite.rotate, False)
+    player_img = pygame.transform.smoothscale(player_img, [ 86, 86 ])
+    player_img.set_colorkey((255, 255, 255))
+    tela.blit(player_img, (player.position[0], player.position[1]))
+
 class game:
     def run():
         cont = 0
@@ -45,8 +50,11 @@ class game:
                     pygame.quit()
             
             tela.blit(cenario, (0, 0))
-            tela.blit(player1, (player_1.position[0], player_1.position[1]))
-            tela.blit(player2, (player_2.position[0], player_2.position[1]))
+
+            
+
+            draw_player(player_1)
+            draw_player(player_2)
 
             game.try_move(keys)
             game.try_shoot(keys)
@@ -67,12 +75,16 @@ class game:
         if(not(walk_x_p1 == 0 and walk_y_p1 == 0)):
             player_1.move((walk_x_p1, walk_y_p1))
             player_1.position = game.calculate_new_pos(player_1)
+        else:
+            player_1.sprite.stop()
         
         walk_x_p2 = (keys[K_d] - keys[K_a])
         walk_y_p2 = (keys[K_s] - keys[K_w])
         if(not(walk_x_p2 == 0 and walk_y_p2 == 0)):
             player_2.move((walk_x_p2, walk_y_p2))
             player_2.position = game.calculate_new_pos(player_2)
+        else:
+            player_2.sprite.stop()
 
 
     def handle_shoot(player_shoot, other_player, key):
