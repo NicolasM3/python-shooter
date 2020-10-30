@@ -51,13 +51,14 @@ class game:
             
             tela.blit(cenario, (0, 0))
 
-            
+            #draw_player(player_1)
+            #draw_player(player_2)
 
-            draw_player(player_1)
-            draw_player(player_2)
+            game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_1, tela)
+            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_2, tela)
 
-            game.try_move(keys)
-            game.try_shoot(keys)
+            game.handle_shoot(player_1, player_2, keys[K_p])
+            game.handle_shoot(player_2, player_1, keys[K_q])
     
             if(has_objects_collided(player_1, player_2)):
                 cont = cont + 1
@@ -65,31 +66,18 @@ class game:
 
             pygame.display.update()
 
-    def try_shoot(keys):
-        game.handle_shoot(player_1, player_2, keys[K_p])
-        game.handle_shoot(player_2, player_1, keys[K_q])
-
-    def try_move(keys):
-        walk_x_p1 = (keys[K_RIGHT] - keys[K_LEFT])
-        walk_y_p1 = (keys[K_DOWN] - keys[K_UP]) 
-        if(not(walk_x_p1 == 0 and walk_y_p1 == 0)):
-            player_1.move((walk_x_p1, walk_y_p1))
-            player_1.position = game.calculate_new_pos(player_1)
+    def try_move(k_r, k_l, k_u, k_d, player, tela):
+        walk_x = (k_r - k_l)
+        walk_y = (k_d - k_u) 
+        if(not(walk_x == 0 and walk_y == 0)):
+            player.move((walk_x, walk_y), tela)
+            player.position = game.calculate_new_pos(player)
         else:
-            player_1.sprite.stop()
-        
-        walk_x_p2 = (keys[K_d] - keys[K_a])
-        walk_y_p2 = (keys[K_s] - keys[K_w])
-        if(not(walk_x_p2 == 0 and walk_y_p2 == 0)):
-            player_2.move((walk_x_p2, walk_y_p2))
-            player_2.position = game.calculate_new_pos(player_2)
-        else:
-            player_2.sprite.stop()
-
+            player.idle(tela)
 
     def handle_shoot(player_shoot, other_player, key):
         if(key and player_shoot.arrow.state == 0):
-            player_shoot.shoot()
+            player_shoot.shoot(tela)
         if(player_shoot.arrow.state == 1):
             game.draw_arrow(player_shoot)
             player_shoot.arrow.move()

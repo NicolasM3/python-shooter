@@ -1,5 +1,6 @@
 from shoot import shoot
 from sprite import sprite
+import pygame
 
 dicionario_direction = {
     0: (0, -1), 1: (1, -1), 2: (1, 0), 3: (1, 1), 4: (0, 1), 5: (-1, 1), 6: (-1, 0), 7: (-1, -1)
@@ -15,19 +16,23 @@ class Player:
         self.__sprite = sprite(player_number, direction)
         self.__direction = direction
 
-    def move(self, tuple_moviment):
+    def move(self, tuple_moviment, tela):
         for key in dicionario_direction:
             if dicionario_direction[key] == tuple_moviment:
                 self.__direction = key
                 break
-
         self.__position[0] += tuple_moviment[0] * self.__speed
         self.__position[1] += tuple_moviment[1] * self.__speed
-        self.__sprite.move(self.direction)
+        self.__sprite.move(self.direction, self.position, tela)
+
+
+    def idle(self, tela):
+        self.sprite.stop(self.__position, tela)
         
-    def shoot(self):
+    def shoot(self, tela):
         self.__arrow = shoot(self.__direction, [self.__position[0], self.__position[1]], self.player_number)
         self.__arrow.state = 1
+        self.sprite.shoot(self.__direction, self.__position, tela)
 
     @property
     def life(self):
