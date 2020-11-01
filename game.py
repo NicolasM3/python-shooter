@@ -40,7 +40,6 @@ def draw_player(player):
 
 class game:
     def run():
-        cont = 0
         while True:
             clock.tick(20)
             keys = pygame.key.get_pressed()
@@ -51,19 +50,9 @@ class game:
             
             tela.blit(cenario, (0, 0))
 
-            #draw_player(player_1)
-            #draw_player(player_2)
+            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_1, tela)
 
-            game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_1, tela)
-            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_2, tela)
-
-            game.handle_shoot(player_1, player_2, keys[K_p])
-            game.handle_shoot(player_2, player_1, keys[K_q])
-    
-            if(has_objects_collided(player_1, player_2)):
-                cont = cont + 1
-                print(cont)
-
+            game.handle_shoot(player_1, player_2, keys[K_q])
             pygame.display.update()
 
     def try_move(k_r, k_l, k_u, k_d, player, tela):
@@ -110,3 +99,6 @@ class game:
         if(object.position[1] <= -15):
             new_position[1] = 580
         return new_position
+
+    def get_player():
+        return player_1

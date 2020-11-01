@@ -25,7 +25,6 @@ class Player:
         self.__position[1] += tuple_moviment[1] * self.__speed
         self.__sprite.move(self.direction, self.position, tela)
 
-
     def idle(self, tela):
         self.sprite.stop(self.__position, tela)
         
@@ -65,6 +64,9 @@ class Player:
     @property
     def sprite(self):
         return self.__sprite
+
+    def as_dict(self):
+        return {"position":self.__position, "direction":self.__direction}
 
 
 
