@@ -1,6 +1,7 @@
 import socket
 import select
 import pickle
+import time
 
 HEADER_LENGTH = 10
 
@@ -46,8 +47,15 @@ while True:
             clients[client_socket] = user
             print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
 
+            if(len(clients) == 2):
+                for i in clients:
+                    response = {"identifier":"start"}
+                    dump_response = pickle.dumps(response)
+                    i.send(dump_response)   
+
         # Se for um usuario já conectado
         else:
+            print(notified_socket.getsockname())
             dump_message = client_socket.recv(notified_socket.getsockname()[1])
             message = pickle.loads(dump_message)
 
@@ -56,8 +64,8 @@ while True:
             print(f'Received message from {user["data"].decode("utf-8")}')
 
             for client_socket in clients:
-                resend_dump_message = pickle.dumps(message)
                 if client_socket != notified_socket:
+                    resend_dump_message = pickle.dumps(message)
                     client_socket.send(resend_dump_message)
 
     for notified_socket in exception_sockets:

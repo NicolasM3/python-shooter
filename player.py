@@ -66,7 +66,7 @@ class Player:
         return self.__sprite
 
     def as_dict(self):
-        return {"position":self.__position, "direction":self.__direction}
+        return {"identifier": "position", "position":self.__position, "direction":self.__direction}
 
 
 
