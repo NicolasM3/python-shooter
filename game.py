@@ -51,9 +51,6 @@ class game:
             
             tela.blit(cenario, (0, 0))
 
-            #draw_player(player_1)
-            #draw_player(player_2)
-
             game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_1, tela)
             game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_2, tela)
 

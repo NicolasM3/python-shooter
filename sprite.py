@@ -35,7 +35,9 @@ class sprite:
         self.count = 0
         self.draw_walk(position, tela)
 
-    def shoot(self, direction, position, tela):
+    def shoot(self, direction, position, tela, is_action):
+        if(is_action):
+            self.count = 0
         if(direction == 0):
             self.draw_shoot("Armature_jump_shooting_up_", position, tela)
         elif(direction == 1 or direction == 7):
@@ -66,11 +68,13 @@ class sprite:
         player_img.set_colorkey((255, 255, 255))
         tela.blit(player_img, (position[0], position[1]))
 
-    def draw_shoot(self, img, position, tela):
-        for i in range(8):
-            player_img = pygame.image.load(self.path + img + str(i) + ".png")
-            player_img = pygame.transform.flip(player_img, self.rotate, False)
-            player_img = pygame.transform.smoothscale(player_img, [ 86, 86 ])
-            player_img.set_colorkey((255, 255, 255))
-            tela.blit(player_img, (position[0], position[1]))
+    def draw_shoot(self, img, position, tela):        
+        player_img = pygame.image.load(self.path + img + str(self.count) + ".png")
+        player_img = pygame.transform.flip(player_img, self.rotate, False)
+        player_img = pygame.transform.smoothscale(player_img, [ 86, 86 ])
+        player_img.set_colorkey((255, 255, 255))
+        tela.blit(player_img, (position[0], position[1]))
+
+        if(self.count == 8):
+            self.count = 0
     
