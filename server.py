@@ -2,6 +2,9 @@ import socket
 import select
 import pickle
 import time
+import threading
+import sys
+import errno
 
 HEADER_LENGTH = 10
 
@@ -12,62 +15,56 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind((IP, PORT))
 server_socket.listen()
-sockets_list = [server_socket]
-clients = {}
+sockets_list = []
 
 print(f'Listening for connections on {IP}:{PORT}...')
 
-def receive_message(client_socket):
-    try:
-        message_header = client_socket.recv(HEADER_LENGTH)
+def handler(client):
+    while True:
+        try:
+            while True:
+                dump_message = client.recv(1234)
+                message = pickle.loads(dump_message)
 
-        if not len(message_header):
-            return False
+                print(f'Received message from {client.getpeername()}')
 
-        message_length = int(message_header.decode('utf-8').strip())
-        return {'header': message_header, 'data': client_socket.recv(message_length)}
+                for client_socket in sockets_list:
+                    if client_socket != client:
+                        print(client_socket.getpeername())
+                        resend_dump_message = pickle.dumps(message)
+                        client_socket.send(resend_dump_message)
 
-    except:
-        return False
+        except IOError as e:
+            if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
+                print('Reading error: {}'.format(str(e)))
+                sys.exit()
+                
+            continue
+
+        except Exception as e:
+            # Any other exception - something happened, exit
+            print("Reading error: {}".format(str(e)))
+            sys.exit()
 
 while True:
 
-    read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
+    client_socket, client_address = server_socket.accept()
+    sockets_list.append(client_socket)
 
-    for notified_socket in read_sockets:
-        # Se for um novo conectado
-        if notified_socket == server_socket:
-            client_socket, client_address = server_socket.accept()
-            user = receive_message(client_socket)
+    print('Accepted new connection from {}:{}'.format(client_address[0], client_address[1]))
 
-            if user is False:
-                continue
+    client_handler = threading.Thread(target=handler,args=(client_socket,))
+    client_handler.start()
 
-            sockets_list.append(client_socket)
-            clients[client_socket] = user
-            print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
+    if len(sockets_list)  == 2:
+        for i in sockets_list:
+            response = {"identifier":"start"}
+            dump_response = pickle.dumps(response)
+            i.send(dump_response)   
 
-            if(len(clients) == 2):
-                for i in clients:
-                    response = {"identifier":"start"}
-                    dump_response = pickle.dumps(response)
-                    i.send(dump_response)   
+            
+            
 
-        # Se for um usuario já conectado
-        else:
-            print(notified_socket.getsockname())
-            dump_message = client_socket.recv(notified_socket.getsockname()[1])
-            message = pickle.loads(dump_message)
 
-            user = clients[notified_socket]
 
-            print(f'Received message from {user["data"].decode("utf-8")}')
 
-            for client_socket in clients:
-                if client_socket != notified_socket:
-                    resend_dump_message = pickle.dumps(message)
-                    client_socket.send(resend_dump_message)
-
-    for notified_socket in exception_sockets:
-        sockets_list.remove(notified_socket)
-        del clients[notified_socket]
