@@ -2,7 +2,18 @@ import pygame
 from player import Player
 from pygame.locals import *
 from threading import Thread
+import socket
+import threading
 import time
+import pickle
+import errno
+import sys
+
+IP = "127.0.0.1"
+PORT = 1234
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((IP, PORT))
+client_socket.setblocking(False)
 
 pygame.init()
 
@@ -13,13 +24,11 @@ pygame.display.set_caption("Shooter")
 player_1 = Player(1, (100, 100), 2)
 
 player_2 = Player(2, (800, 500), 7)
-player2 = pygame.image.load("images//heart2.bmp")
-player2.set_colorkey((255, 255, 255))
+player2_tuple = (0, 0)
 
 tela.blit(cenario, (0, 0))
 
 clock = pygame.time.Clock()
-
 
 def has_objects_collided(object_1, object_2):
     tam = 48
@@ -40,6 +49,11 @@ def draw_player(player):
 
 class game:
     def run():
+        server_communication = threading.Thread(target= client.server_sender)
+        server_communication.start()
+        server_reciver = threading.Thread(target=client.server_reciver)
+        server_reciver.start()
+
         cont = 0
         while True:
             clock.tick(20)
@@ -51,16 +65,17 @@ class game:
             
             tela.blit(cenario, (0, 0))
 
-            game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_1, tela)
-            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_2, tela)
+            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_1, tela)
+            game.handle_shoot(player_1, player_2, keys[K_q])
 
-            game.handle_shoot(player_1, player_2, keys[K_p])
-            game.handle_shoot(player_2, player_1, keys[K_q])
-    
+            if(not(player2_tuple[0] == 0 and player2_tuple[1] == 0)):
+                player_2.move(player2_tuple, tela);
+            else:
+                player_2.idle(tela)
+
             if(has_objects_collided(player_1, player_2)):
                 cont = cont + 1
                 print(cont)
-
             pygame.display.update()
 
     def try_move(k_r, k_l, k_u, k_d, player, tela):
@@ -107,3 +122,47 @@ class game:
         if(object.position[1] <= -15):
             new_position[1] = 580
         return new_position
+
+class client:
+    def server_sender():
+        while True:
+            player_message = pickle.dumps(player_1.as_dict())
+            client_socket.send(player_message)
+            time.sleep(10)
+
+    def server_reciver():
+        last_position = (-1, -1)
+        while True:
+            try:
+                while True:                    
+                    dump_message = client_socket.recv(1234)
+                    message = pickle.loads(dump_message)
+
+                    if(message["identifier"] == "start"):                                            
+                        if(message["player_number"] == 1):
+                            player_1.position = [100, 100]
+                            player_2.position = [800, 500]
+                        else:
+                            player_1.position = [800, 500]
+                            player_2.position = [100, 100]
+                    
+
+                    if(message["identifier"] == "position"):
+                        position = (message["position"][0], message["position"][1])
+                        if(position != last_position):                            
+                            last_position = position
+                            player2_tuple = message["tuple_movement"]
+                        else:
+                            player2_tuple = (0, 0)
+
+            except IOError as e:
+                if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
+                    print('Reading error: {}'.format(str(e)))
+                    sys.exit()
+
+                continue
+
+            except Exception as e:
+                # Any other exception - something happened, exit
+                print("Reading error: {}".format(str(e)))
+                sys.exit()

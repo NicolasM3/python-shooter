@@ -79,7 +79,13 @@ class Player:
     def sprite(self):
         return self.__sprite
 
+    @property
+    def speed(self):
+        return self.speed
 
+    def as_dict(self):
+        return {"identifier": "position", "position":self.__position, "direction":self.__direction,
+        "tuple_movement": dicionario_direction[self.__direction]}
 
     
 
