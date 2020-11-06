@@ -5,16 +5,23 @@ from threading import Thread
 import time
 
 pygame.init()
+pygame.mixer.init()
+
+pygame.mixer.music.load("soundtrack//Titan Souls - 02 Titans.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.2)
 
 tela = pygame.display.set_mode((900, 600))
 cenario = pygame.image.load("images//background(2).bmp")
 pygame.display.set_caption("Shooter")
 
 player_1 = Player(1, (100, 100), 2)
+heart_player1 = pygame.image.load("images//heart1.bmp")
+heart_player1.set_colorkey((255, 255, 255))
 
 player_2 = Player(2, (800, 500), 7)
-player2 = pygame.image.load("images//heart2.bmp")
-player2.set_colorkey((255, 255, 255))
+heart_player2 = pygame.image.load("images//heart2.bmp")
+heart_player2.set_colorkey((255, 255, 255))
 
 tela.blit(cenario, (0, 0))
 
@@ -38,6 +45,16 @@ def draw_player(player):
     player_img.set_colorkey((255, 255, 255))
     tela.blit(player_img, (player.position[0], player.position[1]))
 
+def draw_life():
+    player1_life = player_1.life
+    player2_life = player_2.life
+
+    for i in range(0, player2_life):
+        tela.blit(heart_player2, (750 + (i * 40), 25))
+
+    for i in range(0, player1_life):
+        tela.blit(heart_player1, (0 + (i * 40), 25))
+
 class game:
     def run():
         cont = 0
@@ -45,23 +62,29 @@ class game:
             clock.tick(20)
             keys = pygame.key.get_pressed()
 
+            
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
             
             tela.blit(cenario, (0, 0))
 
-            game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_1, tela)
-            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_2, tela)
+            game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_2, tela)
+            game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_1, tela)
 
-            game.handle_shoot(player_1, player_2, keys[K_p])
-            game.handle_shoot(player_2, player_1, keys[K_q])
+            game.handle_shoot(player_1, player_2, keys[K_q])
+            game.handle_shoot(player_2, player_1, keys[K_p])
     
-            if(has_objects_collided(player_1, player_2)):
-                cont = cont + 1
-                print(cont)
+            draw_life()
+
+            if(player_1.life == 0 or player_2.life == 0):
+                print("ganhou")
+                break
 
             pygame.display.update()
+
+        
 
     def try_move(k_r, k_l, k_u, k_d, player, tela):
         walk_x = (k_r - k_l)
@@ -81,7 +104,7 @@ class game:
             player_shoot.arrow.position = game.calculate_new_pos(player_shoot.arrow)
 
             if(has_objects_collided(player_shoot.arrow, other_player)):
-                print('Ganhou')
+                other_player.life = 1
                 player_shoot.arrow.state = 2
         
         if(player_shoot.arrow.state == 2):
