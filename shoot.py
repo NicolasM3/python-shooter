@@ -46,6 +46,8 @@ class shoot:
         return self.__state
     @state.setter
     def state(self, state):
+        if(state == 2):
+            self.__current_image = self.images[8]
         self.__state = state
     
     @property
