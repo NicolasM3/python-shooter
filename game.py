@@ -12,7 +12,11 @@ pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.2)
 
 tela = pygame.display.set_mode((900, 600))
+initial_menu = pygame.image.load("images//menu.png")
+esc_menu = pygame.image.load("images//esc_menu.png")
 cenario = pygame.image.load("images//background(2).bmp")
+winner_1 = pygame.image.load("images//player_1_winner.png")
+winner_2 = pygame.image.load("images//player_2_winner.png")
 pygame.display.set_caption("Shooter")
 
 player_1 = Player(1, (100, 100), 2)
@@ -22,8 +26,6 @@ heart_player1.set_colorkey((255, 255, 255))
 player_2 = Player(2, (800, 500), 7)
 heart_player2 = pygame.image.load("images//heart2.bmp")
 heart_player2.set_colorkey((255, 255, 255))
-
-tela.blit(cenario, (0, 0))
 
 clock = pygame.time.Clock()
 
@@ -55,20 +57,50 @@ def draw_life():
     for i in range(0, player1_life):
         tela.blit(heart_player1, (0 + (i * 40), 25))
 
+def draw_menu(img):
+    while True:
+        tela.blit(img, (0,0))
+        clock.tick(20)
+        keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        if keys[K_SPACE] != 0:
+            break
+        if keys[K_q] != 0:
+            pygame.quit()
+        pygame.display.update()
+
+
+def show_winner(winner_img):
+    tela.blit(winner_img, (0, 0))
+    pygame.display.update()
+    clock.tick(10000)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                pygame.quit()
+            
 class game:
     def run():
+        draw_menu(initial_menu)
+
         cont = 0
         while True:
             clock.tick(20)
             keys = pygame.key.get_pressed()
-
-            
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
             
             tela.blit(cenario, (0, 0))
+
+            if(keys[K_ESCAPE] != 0):
+                draw_menu(esc_menu)
 
             game.try_move(keys[K_RIGHT], keys[K_LEFT], keys[K_UP], keys[K_DOWN], player_2, tela)
             game.try_move(keys[K_d], keys[K_a], keys[K_w], keys[K_s], player_1, tela)
@@ -78,9 +110,10 @@ class game:
     
             draw_life()
 
-            if(player_1.life == 0 or player_2.life == 0):
-                print("ganhou")
-                break
+            if(player_1.life == 0):
+                show_winner(winner_2)
+            elif(player_2.life == 0):
+                show_winner(winner_1)
 
             pygame.display.update()
 
