@@ -1,3 +1,5 @@
+import pygame
+
 dicionario_direction = {
     0: (0, -1), 1: (1, -1), 2: (1, 0), 3: (1, 1), 4: (0, 1), 5: (-1, 1), 6: (-1, 0), 7: (-1, -1)
 }
@@ -6,7 +8,7 @@ dicionario_direction = {
 
 # classe que representa o tiro
 class shoot:
-    # definimos as variaveis direcao, posicao, nmr da imagem, velocidade e força
+    # definimos as variaveis direcao, posicao, nmr da imagem, som, velocidade e força
     def __init__(self, direction, position, image_number):
         self.__state = 0
 
@@ -14,10 +16,10 @@ class shoot:
         self.__power = 40
         self.__direction = direction
         self.__position = position
-        
+        self.__sound = f"soundtrack//sound_tiro_{image_number}.mp3"
         self.incremento_x = dicionario_direction[direction][0] * self.__speed
         self.incremento_y = dicionario_direction[direction][1] * self.__speed
-
+        self.player_number = image_number
         self.images = [
             f"arrow{image_number}_top.bmp",
             f"arrow{image_number}_top_right.bmp",
@@ -57,6 +59,9 @@ class shoot:
     def state(self, state):
         if(state == 2):
             self.__current_image = self.images[8]
+        if(state == 0):
+            pygame.mixer.Channel(self.player_number).play(pygame.mixer.Sound("soundtrack//sound_reload.mp3")) # som do reload
+
         self.__state = state
     
     # getter para a direcao
@@ -88,6 +93,11 @@ class shoot:
     @current_image.setter
     def current_image(self, direction):
         self.__current_image = self.images[direction]
+
+    # getter para o som da flecha
+    @property
+    def sound(self):
+        return self.__sound
 
 
 

@@ -66,6 +66,7 @@ class Player:
 
         # instancia uma nova flecha
         self.__arrow = shoot(self.__direction, [self.__position[0], self.__position[1]], self.player_number)
+        pygame.mixer.Channel(self.player_number).play(pygame.mixer.Sound(self.__arrow.sound)) # som do tiro
         self.__arrow.state = 1
 
         # Instancia uma instancia de sprite para fazer as animações

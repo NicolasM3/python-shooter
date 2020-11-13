@@ -4,14 +4,17 @@ from player import Player
 from pygame.locals import *
 from threading import Thread
 import time
+import random
 
 pygame.init()                                               # iniciando pygame
 pygame.mixer.init()                                         # iniciando som
 
 # carregando e configurando o som
-pygame.mixer.music.load("soundtrack//Titan Souls - 02 Titans.mp3")  
-pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.2)
+# pygame.mixer.music.load("soundtrack//Titan Souls - 02 Titans.mp3")  
+# pygame.mixer.music.play(-1)
+# pygame.mixer.music.set_volume(0.2)
+
+pygame.mixer.Channel(0).play(pygame.mixer.Sound("soundtrack//Titan Souls - 02 Titans.mp3"), loops=5)
 
 # iniciando e configurando a tela
 tela = pygame.display.set_mode((900, 600))
