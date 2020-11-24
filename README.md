@@ -31,4 +31,4 @@ The 2nd player uses the arrows to move and P to shoot.
 
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[Apache](https://choosealicense.com/licenses/apache-2.0/)
