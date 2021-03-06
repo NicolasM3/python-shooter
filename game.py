@@ -153,7 +153,7 @@ class game:
             elif(player_2.life == 0):
                 show_winner(winner_1)
 
-            pygame.display.update()                                     # atualiza a tela
+            pygame.display.update()                                     # atualiza a tela do jogo
 
         
     # Verfica se esta se movendo e faz as ações necessarias apartir disso
